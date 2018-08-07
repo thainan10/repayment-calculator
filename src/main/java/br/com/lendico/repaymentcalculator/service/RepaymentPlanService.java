@@ -5,9 +5,8 @@ import br.com.lendico.repaymentcalculator.domain.RepaymentPlanResult;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -17,10 +16,16 @@ public class RepaymentPlanService {
 
     private final int DAYS_PER_YEAR = 360;
 
+    private final int QTD_MONTHS_TO_INCREASE = 1;
+
     private Double fromCentsToEuros(Double cents) {
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
 
         return Double.valueOf(decimalFormat.format(cents / 100));
+    }
+
+    private ZonedDateTime increaseMonth(ZonedDateTime dateTime) {
+        return dateTime.plusMonths(QTD_MONTHS_TO_INCREASE);
     }
 
     private Double calculateAnnuity(RepaymentPlanInput repaymentPlanInput) {
@@ -48,16 +53,9 @@ public class RepaymentPlanService {
         return initialOutstanding - principal;
     }
 
-    private Date addMonthToDate(Date currentDate, Integer mouths) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(currentDate);
-        calendar.add(Calendar.MONTH, mouths);
-        return calendar.getTime();
-    }
-
     private RepaymentPlanResult buildRepaymentPlan(
             RepaymentPlanInput repaymentPlanInput,
-            Date date,
+            ZonedDateTime date,
             Double initialOutstanding) {
         Double annuity = calculateAnnuity(repaymentPlanInput);
         Double interest = calculateInterest(repaymentPlanInput);
@@ -71,11 +69,11 @@ public class RepaymentPlanService {
     public List<RepaymentPlanResult> createRepaymentPlan(RepaymentPlanInput repaymentPlanInput) {
         List<RepaymentPlanResult> result = new ArrayList<>();
 
-        Date date = repaymentPlanInput.getStartDate();
+        ZonedDateTime date = repaymentPlanInput.getStartDate();
         Double initialOutstanding = repaymentPlanInput.getLoanAmount();
 
         for (int k = 0; k < repaymentPlanInput.getDuration(); k++) {
-            date = addMonthToDate(date, k);
+            date = increaseMonth(date);
 
             RepaymentPlanResult repaymentPlanResult = buildRepaymentPlan(repaymentPlanInput, date, initialOutstanding);
             result.add(repaymentPlanResult);

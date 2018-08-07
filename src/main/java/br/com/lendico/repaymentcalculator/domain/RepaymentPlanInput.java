@@ -1,6 +1,6 @@
 package br.com.lendico.repaymentcalculator.domain;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 public class RepaymentPlanInput {
 
@@ -10,12 +10,12 @@ public class RepaymentPlanInput {
 
     private Double loanAmount;
 
-    private Date startDate;
+    private ZonedDateTime startDate;
 
     public RepaymentPlanInput() {
     }
 
-    public RepaymentPlanInput(Integer duration, Double nominalRate, Double loanAmount, Date startDate) {
+    public RepaymentPlanInput(Integer duration, Double nominalRate, Double loanAmount, ZonedDateTime startDate) {
         this.duration = duration;
         this.nominalRate = nominalRate;
         this.loanAmount = loanAmount;
@@ -46,11 +46,11 @@ public class RepaymentPlanInput {
         this.loanAmount = loanAmount;
     }
 
-    public Date getStartDate() {
+    public ZonedDateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(ZonedDateTime startDate) {
         this.startDate = startDate;
     }
 }

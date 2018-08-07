@@ -1,10 +1,11 @@
 package br.com.lendico.repaymentcalculator.domain;
 
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 public class RepaymentPlanResult {
 
-    private Date date;
+    private ZonedDateTime date;
 
     private Double borrowerPaymentAmount;
 
@@ -19,7 +20,13 @@ public class RepaymentPlanResult {
     public RepaymentPlanResult() {
     }
 
-    public RepaymentPlanResult(Date date, Double borrowerPaymentAmount, Double principal, Double interest, Double initialOutstandingPrincipal, Double remainingOutstandingPrincipal) {
+    public RepaymentPlanResult(
+            ZonedDateTime date,
+            Double borrowerPaymentAmount,
+            Double principal,
+            Double interest,
+            Double initialOutstandingPrincipal,
+            Double remainingOutstandingPrincipal) {
         this.date = date;
         this.borrowerPaymentAmount = borrowerPaymentAmount;
         this.principal = principal;
@@ -28,11 +35,11 @@ public class RepaymentPlanResult {
         this.remainingOutstandingPrincipal = remainingOutstandingPrincipal;
     }
 
-    public Date getDate() {
+    public ZonedDateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(ZonedDateTime date) {
         this.date = date;
     }
 
