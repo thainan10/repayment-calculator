@@ -4,6 +4,7 @@ import br.com.lendico.repaymentcalculator.domain.RepaymentPlanInput;
 import br.com.lendico.repaymentcalculator.domain.RepaymentPlanResult;
 import org.springframework.stereotype.Service;
 
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -18,6 +19,8 @@ public class RepaymentPlanService {
 
     private final int QTD_MONTHS_TO_INCREASE = 1;
 
+    private final int PERIOD_IN_MONTHS = 12;
+
     private Double fromCentsToEuros(Double cents) {
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
 
@@ -28,13 +31,20 @@ public class RepaymentPlanService {
         return dateTime.plusMonths(QTD_MONTHS_TO_INCREASE);
     }
 
-    private Double calculateAnnuity(RepaymentPlanInput repaymentPlanInput) {
-        Integer periods = repaymentPlanInput.getDuration();
-        Double payment = repaymentPlanInput.getLoanAmount();
-        Double ratePerPeriod = repaymentPlanInput.getNominalRate() / periods;
+    private Double roundValue(Double value) {
+        DecimalFormat decimalFormat = new DecimalFormat("###.##");
+        decimalFormat.setRoundingMode(RoundingMode.UP);
+        return Double.valueOf(decimalFormat.format(value));
+    }
 
-        Double auxSquare = Math.pow(1 + ratePerPeriod, periods * -1);
-        return (payment * (1 - auxSquare)) / ratePerPeriod;
+    private Double calculateAnnuity(RepaymentPlanInput repaymentPlanInput) {
+        Double presentValue = repaymentPlanInput.getLoanAmount();
+        Integer periods = repaymentPlanInput.getDuration();
+        Double ratePerPeriod = repaymentPlanInput.getNominalRate() / PERIOD_IN_MONTHS / 100;
+
+        Double dividend = ratePerPeriod * presentValue;
+        Double divisor = 1 - Math.pow(1 + ratePerPeriod, periods * -1);
+        return roundValue(dividend / divisor);
     }
 
     private Double calculateInterest(RepaymentPlanInput repaymentPlanInput) {
@@ -46,7 +56,7 @@ public class RepaymentPlanService {
     }
 
     private Double calculatePrincipal(Double annuity, Double interest) {
-        return annuity - interest;
+        return roundValue(annuity - interest);
     }
 
     private Double calculateRemainingOutstanding(Double initialOutstanding, Double principal) {
