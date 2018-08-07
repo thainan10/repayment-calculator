@@ -1,7 +1,6 @@
 package br.com.lendico.repaymentcalculator.domain;
 
 import java.time.ZonedDateTime;
-import java.util.Date;
 
 public class RepaymentPlanResult {
 

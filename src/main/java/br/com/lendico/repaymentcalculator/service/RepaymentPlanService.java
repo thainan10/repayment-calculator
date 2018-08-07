@@ -33,7 +33,7 @@ public class RepaymentPlanService {
         ZonedDateTime date = repaymentPlanInput.getStartDate();
         Double initialOutstanding = repaymentPlanInput.getLoanAmount();
 
-        for (int k = 0; k <= repaymentPlanInput.getDuration(); k++) {
+        for (int k = 0; k < repaymentPlanInput.getDuration(); k++) {
             RepaymentPlanResult repaymentPlanResult = buildRepaymentPlan(repaymentPlanInput, date, initialOutstanding);
             result.add(repaymentPlanResult);
 
