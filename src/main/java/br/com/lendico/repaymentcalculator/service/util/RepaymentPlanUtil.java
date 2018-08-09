@@ -30,6 +30,12 @@ public class RepaymentPlanUtil {
         return Double.valueOf(decimalFormat.format(value));
     }
 
+    private static Double calculateRatePerPeriod(Double percentRate) {
+        // Cast nominal rate from percentage to decimal.
+        Double decimalRate = percentRate / 100;
+        return decimalRate / PERIOD_IN_MONTHS;
+    }
+
     public static ZonedDateTime increaseMonth(ZonedDateTime dateTime) {
         return dateTime.plusMonths(QTD_MONTHS_TO_INCREASE);
     }
@@ -37,7 +43,7 @@ public class RepaymentPlanUtil {
     public static Double calculateAnnuity(RepaymentPlanInput repaymentPlanInput) {
         Double presentValue = repaymentPlanInput.getLoanAmount();
         Integer periods = repaymentPlanInput.getDuration();
-        Double ratePerPeriod = repaymentPlanInput.getNominalRate() / PERIOD_IN_MONTHS / 100;
+        Double ratePerPeriod = calculateRatePerPeriod(repaymentPlanInput.getNominalRate());
 
         Double dividend = ratePerPeriod * presentValue;
         Double divisor = 1 - Math.pow(1 + ratePerPeriod, periods * -1);
