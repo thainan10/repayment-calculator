@@ -18,21 +18,17 @@ public class RepaymentPlanUtil {
 
     private static final int PERIOD_IN_MONTHS = 12;
 
-    private static Double fromCentsToEuros(Double cents) {
-        DecimalFormat decimalFormat = new DecimalFormat("#.##");
-
-        return Double.valueOf(decimalFormat.format(cents / 100));
+    private static Double fromPercentageToDecimal(Double percentage) {
+        return percentage / 100;
     }
 
     private static Double roundValue(Double value) {
         DecimalFormat decimalFormat = new DecimalFormat("###.##");
-        decimalFormat.setRoundingMode(RoundingMode.UP);
         return Double.valueOf(decimalFormat.format(value));
     }
 
     private static Double calculateRatePerPeriod(Double percentRate) {
-        // Cast nominal rate from percentage to decimal.
-        Double decimalRate = percentRate / 100;
+        Double decimalRate = fromPercentageToDecimal(percentRate);
         return decimalRate / PERIOD_IN_MONTHS;
     }
 
@@ -51,10 +47,10 @@ public class RepaymentPlanUtil {
     }
 
     public static Double calculateInterest(RepaymentPlanInput repaymentPlanInput, Double initialOutstandingPrincipal) {
-        Double nominalRate = repaymentPlanInput.getNominalRate();
+        Double nominalRate = fromPercentageToDecimal(repaymentPlanInput.getNominalRate());
 
         Double interest = (nominalRate * DAYS_IN_MONTH * initialOutstandingPrincipal) / DAYS_IN_YEAR;
-        return fromCentsToEuros(interest);
+        return roundValue(interest);
     }
 
     public static Double calculatePrincipal(Double annuity, Double interest) {
